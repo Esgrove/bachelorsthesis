@@ -1,7 +1,7 @@
 # Bachelor's Thesis (in Finnish)
 
 ### Analogisen äänisynteesin digitaalinen mallinnus
-## (Digital Modeling of Analog Sound Synthesis)   
+#### (Digital Modeling of Analog Sound Synthesis)   
 Aalto University School of Electrical Engineering,      
 Department of Signal Processing and Acoustics,   
 2014   
