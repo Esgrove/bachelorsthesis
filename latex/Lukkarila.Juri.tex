@@ -1,0 +1,778 @@
+\documentclass[finnish,12pt,a4paper,pdftex]{article} % , twoside
+
+% prevent twoside from setting all pages to the same height!
+%\raggedbottom
+
+\usepackage[elec,utf8]{aaltothesis}
+
+\usepackage[finnish]{babel}
+
+\usepackage{graphicx}
+
+\usepackage{epstopdf}
+
+\usepackage{booktabs}
+
+\usepackage{amsfonts,amssymb,amsbsy, amsmath}  % math
+
+\usepackage[hang, bf, justification=justified, format=plain, labelfont={bf,it}, textfont=it]{caption}
+
+\usepackage{subfigure}
+
+\usepackage{verbatim} % comment
+
+\usepackage{color}
+
+\usepackage[]{mcode} 
+
+\usepackage{microtype}
+
+\usepackage{lmodern} 
+
+\usepackage{float} 
+
+\graphicspath{{./}{figures/}}
+
+% viitteet
+%\usepackage[square, sort, numbers]{natbib}
+%\usepackage[square, numbers]{natbib}
+%\usepackage[square]{natbib}
+\usepackage[fixlanguage]{babelbib}
+\selectbiblanguage{finnish}
+
+% fiksataan suomennoksia!
+\declarebtxcommands{finnish}{\def\btxphdthesis#1{\foreignlanguage{finnish}{Väitöskirja}}}
+\declarebtxcommands{finnish}{\def\btxmastthesis#1{\foreignlanguage{finnish}{Diplomityö}}}
+\declarebtxcommands{finnish}{\def\btxpagelong#1{\foreignlanguage{finnish}{sivut}}}
+
+\usepackage[pdfpagemode=None,colorlinks=true,urlcolor=red,%
+linkcolor=blue,citecolor=black,pdfstartview=FitH]{hyperref}
+
+%% Vaakasuunnan mitat
+\setlength{\hoffset}{-1in}
+\setlength{\oddsidemargin}{35mm}
+\setlength{\evensidemargin}{25mm}
+\setlength{\textwidth}{15cm}
+
+%% Pystysuunnan mitat
+\setlength{\voffset}{-1in}
+\setlength{\headsep}{7mm}
+\setlength{\headheight}{1em}
+\setlength{\topmargin}{25mm-\headheight-\headsep}
+\setlength{\textheight}{23.5cm}
+
+%% Kuvaajien välit
+\setlength{\intextsep}{6pt}     			% Vertical space above & below [h] floats
+\setlength{\textfloatsep}{6pt} 			   % Vertical space below (above) [t] ([b]) floats
+\setlength{\abovecaptionskip}{8pt}
+\setlength{\belowcaptionskip}{0pt}
+
+\begin{document}
+	
+\pagenumbering{Roman}  % uppercase letters
+
+\degreeprogram{Electronics and electrical engineering}{Elektroniikka ja sähkötekniikka}
+
+\univdegree{BSc}
+
+\author{Juri Lukkarila}
+
+\thesistitle{Thesis template}{Analogisen äänisynteesin digitaalinen mallinnus}
+
+\place{Espoo}
+
+%% Kandidaatintyön päivämäärä on sen esityspäivämäärä! 
+\date{10.12.2014}
+
+\supervisor{TkT\ Markus Turunen}{TkT\ Markus Turunen}
+
+\instructor{Prof.\ Vesa Välimäki}{Prof.\ Vesa Välimäki}
+
+\uselogo{aaltoRed}{!}
+
+%% Tehdään kansilehti
+\makecoverpage
+
+%% Suomenkielinen tiivistelmä
+\keywords{audiojärjestelmät, äänenkäsittely, digitaalinen signaalinkäsittely, musiikki}
+
+\setcounter{page}{1} 
+
+\begin{abstractpage}[finnish]
+
+Tämä kandidaatintyö esittelee menetelmiä analogisen äänisynteesin digitaaliseen mallintamiseen ja toteuttamiseen reaaliajassa. Useimmat analogiset syntetisaattorit käyttävät äänentuottomenetelmänään vähentävää synteesiä, missä spektriltään rikasta lähdesignaalia suodatetaan halutun äänen aikaansaamiseksi. Vähentävän synteesin digitaalinen toteuttaminen sisältää monia haasteita, ja aihepiiri on ollut akateemisen tutkimuksen kohteena etenkin viimeisen kymmenen vuoden ajan. \\\\
+Analogisynteesin digitaalinen mallinnus voidaan jakaa kahteen osa-alueeseen, jotka ovat lähdesignaalien tuottaminen ja suodatinmallinnus. Tämä työ keskittyy lähdesignaalien tuottamiseen, mihin myös aihepiirin tutkimus on painottunut. Lähdesignaalien tuottamisessa merkittävin ongelma on digitaalisissa järjestelmissä esiintyvä laskostuminen, joka vaikuttaa negatiivisesti äänenlaatuun. Lähdesignaalien tuottamismenetelmät voidaan jakaa neljään kategoriaan, jotka toisistaan erottaa niiden lähestymistapa laskostumisen estämiseen. \\\\
+Lähdesignaalien tuottamiseen käytettäviä oskillaattorialgoritmeja voidaan vertailla niiden laskennallisen kuorman, muistivaatimuksien sekä saavutettavan äänenlaadun suhteen. Yhtä täydellistä oskillaattorialgoritmia ei ole vielä olemassa, mutta useilla menetelmillä on mahdollista saavuttaa hyviä tuloksia. Digitaalisen mallinnuksen perimmäinen tavoite on tuottaa digitaalisesti oikeiden analogisyntetisaattoreiden kanssa identtiseltä kuulostavaa ääntä, mikä tyypillisesti vaatii analogisien piirien sisältämien epälineaarisuuksien mallintamista.
+
+\end{abstractpage}
+
+\newpage
+
+%% Sisällysluettelo
+{\renewcommand{\baselinestretch}{1.05}
+\thesistableofcontents}
+
+%% Symbolit ja lyhenteet
+\mysection{Symbolit ja lyhenteet}
+
+\subsection*{Symbolit}
+{\setlength{\tabcolsep}{4mm}
+	\renewcommand{\arraystretch}{1.15}
+\begin{tabular}{ll}
+ $c_{dc}$		& Vaihesiirtymä (\textit{offset}) \\
+$\delta(t)$		& Yksikköimpulssifunktio \\
+$f$				& Taajuus [Hz] \\
+$f_N$			& Normalisoitu taajuus \\
+$f_s$			& Näytteenottotaajuus [Hz] \\
+$k$				& Indeksimuuttuja, $ \in \mathbb{N}$ \\
+$n$				& Indeksimuuttuja, $ \in \mathbb{N}$ \\
+$N$				& Asteluku, 1,2,3,... \\
+$\mathbb{N}$	& Luonnolliset luvut, 0,1,2,3,... \\
+$p(n)$			& Vaihesignaali \\
+$s(n)$			& Jakojäännöslaskuri \\
+$t$				& Aikamuuttuja [s] \\
+$T$				& Jaksonaika, $T = 1/f $ [s] \\
+$u(t)$			& Yksikköaskelfunktio \\
+$x(t)$			& Jatkuva signaali \\
+$W$			& Siirtymäalueen leveys \\
+\end{tabular}}
+\vspace{3mm}
+{\setlength{\tabcolsep}{4mm}
+	\renewcommand{\arraystretch}{1.15}
+\subsection*{Lyhenteet}
+\begin{tabular}{ll}
+BLIT	& Kaistarajoitettu impulssijono (\textit{bandlimited impulse train}) \\
+BLEP	& Kaistarajoitettu askelfunktio (\textit{bandlimited step function}) \\
+DPW		& Differentioitu polynominen aaltomuoto (\textit{differentiated polynomial waveform}) \\
+DSF		& Diskreetti summauskaava (\textit{discrete summation formula}) \\
+EPTR	& Tehokas PTR (\textit{efficient PTR}) \\
+FFT		& Nopea Fourier-muunnos (\textit{fast Fourier transform}) \\
+FIR		& Äärellinen impulssivaste (\textit{finite impulse response}) \\
+FM		& Taajuusmodulaatio (\textit{frequency modulation}) \\
+PTR		& Polynomiset siirtymäalueet (\textit{polynomial transition regions})  \\
+\end{tabular}}
+
+\cleardoublepage
+\storeinipagenumber
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\section{Johdanto}
+
+Analogiset syntetisaattorit yleistyivät muusikoiden ja musiikkituottajien keskuudessa 1960-luvulla, kun ensimmäiset kaupalliset analogiset syntetisaattorit tulivat markkinoille. 1970-luvulle tultaessa etenkin Robert Moogin suunnittelemat syntetisaattorit olivat suosittuja muusikoiden keskuudessa. Tämän aikakauden syntetisaattorit perustuivat pääosin vähentävään äänisynteesiin (\textit{substractive synthesis}). 1980-luvulle tultaessa uudet digitaaliset syntetisaattorit, jotka perustuivat esimerkiksi FM-synteesiin, syrjäyttivät nopeasti analogiset vastineensa. 1990-luvulla kuitenkin kiinnostus analogisiin syntetisaattoreihin ja vähentävään synteesiin heräsi jälleen etenkin elektronisen musiikin parissa. Tämä kiinnostus on jatkunut ja voimistunut aina nykypäivään saakka. \cite{Valimaki2007, Pekonen2014} \\\\
+Analoginen elektroniikka asettaa kuitenkin omat haasteensa niin hinnan, käytettävyyden kuin ominaisuuksien osalta. Analogiset syntetisaattorit ovat usein kookkaita, ja niissä esiintyy viritysongelmia. Digitaalitekniikka on puolestaan halpaa ja tehokasta, ja etenkin nykyaikaiset tietokoneet suurella laskentatehollaan ja monipuolisuudellaan tarjoavat hyvin laajat mahdollisuudet äänisynteesille. Näin ollen syntyi kiinnostus mallintaa analogista vähentävää synteesiä digitaalisesti, eli jäljitellä analogisynteesin tuottamaa ääntä digitaalisilla menetelmillä ja järjestelmillä. Tästä käytetään yleisesti nimitystä virtuaalianalogisynteesi, ja siihen perustuvia kaupallisia tuotteita on ollut saatavilla aina 1990-luvun puolivälistä saakka niin fyysisinä laitteistoina kuin ohjelmistototeutuksina. \cite{Pekonen2014, Valimaki2006, Nostalgia} \\\\
+Akateemisessa maailmassa virtuaalianalogisynteesin tutkimus on kasvanut suuresti viimeisen kymmenen vuoden aikana, ja aihetta on tutkittu paljon Aalto-yliopiston sähkötekniikan korkeakoulussa signaalinkäsittelyn ja akustiikan laitoksella. Analogisynteesin mallinnuksen lopullinen tavoite on tuottaa identtiseltä kuulostavaa ääntä mallinnuksen kohteen kanssa.
+Merkittävimmät haasteet tämän tavoitteen toteuttamisessa ovat digitaalisien järjestelmien rajattu kaistanleveys ja sähköisten piirien epälineaarisuuksien mallintaminen. \cite{Historia} \\\\
+Tämän työn tarkoitus on esitellä menetelmiä virtuaalianalogisynteesissä tarvittavien lähdesignaalien tuottamiseen. Analogisynteesin mallinnus voidaan jakaa kahteen osa-alueeseen, jotka ovat lähdesignaalien generointi ja suodatinmallinnus. Työn pääpaino on lähdesignaalien tuottamiseen käytettävissä algoritmeissa, mihin myös aiheen tutkimus on pitkälti keskittynyt. \cite{Historia}
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%
+
+\section{Vähentävä synteesi}
+\label{sec:synteesi}
+
+Vähentävä synteesi on analogisten syntetisaattoreiden pääasiallinen äänentuottomenetelmä. Vähentävässä äänisynteesissä lähdetään liikkeelle spektriltään, eli taajuusjakaumaltaan rikkaasta lähdesignaalista, jota suodatetaan säädettävällä resonanssilla varustetulla alipäästösuodattimella. Lähdesignaalina toimii tyypillisesti yksi tai useampi perinteisistä geometrisistä aaltomuodoista, joita ovat kolmio-, saha- ja suorakaideaalto. Näiden lisäksi voidaan käyttää kohinaa, sekä edellä mainittujen aaltomuotojen muunnelmia pulssinleveyden suhteen. Mainitut aaltomuodot esitetään kuvassa \ref{fig:aaltomuodot}. \cite{Pekonen2014}
+\vspace{2mm}
+\begin{figure}[h] 
+\begin{center} 
+\subfigure[kolmioaalto]{
+\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{kolmioaalto.pdf}} % trim={<left> <lower> <right> <upper>}
+\subfigure[suorakaideaalto]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{suorakaideaalto.pdf}}
+\subfigure[saha-aalto]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{saha_aalto.pdf}}
+\subfigure[käännetty saha-aalto]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{saha_aalto_kaan.pdf}}	
+\caption{Ideaaliset geometriset aaltomuodot.}
+\label{fig:aaltomuodot}
+\end{center}
+\end{figure} \\
+Alipäästösuodattimella saadaan poistettua spektristä ei-halutut ylemmät harmoniset komponentit, ja vastaavasti säädettävällä suodattimen resonanssilla voidaan korostaa taajuuskomponentteja suodattimen rajataajuudella. Voimakkaan resonanssin käyttö onkin yksi vähentävällä synteesillä tuotetun äänen ominaispiirre. Kuvassa \ref{fig:alipäästö} esitetään tyypillinen taajuusvaste resonoivalle alipäästösuodattimelle. Vähentävän synteesin toimintaperiaate voidaan siis käsittää lähde-suodinjärjestelmänä, missä aluksi tuotetun signaalin spektriä suodattimella muokkaamaalla saadaan aikaiseksi halutunlainen lopputulos. \cite{Nostalgia}
+\begin{figure}[h] 
+\begin{center}
+\includegraphics[width=\textwidth-1.8cm]{moogalipaasto.pdf}
+\caption{Resonoivan alipäästösuodattimen taajuusvaste.}
+\label{fig:alipäästö}
+\end{center}
+\end{figure} \\\\
+Esiteltyjen aaltomuotojen tuottaminen analogisella elektroniikalla on helppoa ja yksinkertaista, ja näitä aaltomuotoja tuottavia erilaisia piiriratkaisuja on olemassa monia. Historiallisesti yksi merkittävä tekijä juuri näiden aaltomuotojen käyttämiseen olikin, että ensimmäisiä syntetisaattoreita suunniteltaessa näiden perinteisten aaltomuotojen elektroniset toteutukset olivat jo olemassa funktiogeneraattoreiden myötä. Vähentävän synteesin digitaalisessa toteutuksessa suurimman ongelman muodostaa ideaalisten aaltomuotojen epäjatkuvuuskohdista aiheutuva kaistarajoittamattomuus, mikä tarkoittaa, että signaalin täydelliseen esittämiseen vaaditaan ääretön määrä harmonisia taajuuskomponentteja. Kaistarajoittamattomuus on selkeästi nähtävissä aaltomuotojen Fourier-sarjoista: Kolmioaallon Fourier-sarja esitetään kaavassa (\ref{eq:Fkol}), suorakaideaallon kaavassa (\ref{eq:Fkan}) ja saha-aallon kaavassa (\ref{eq:Fsaha}). \cite{Pekonen2014, Lehtonen2012} \\
+\vspace{2mm}
+\begin{equation} \label{eq:Fkol}
+x_{kolmio}(t) = -\frac{4}{\pi}\sum_{k=1}^{\infty}\frac{|\textrm{sinc}(\frac{k}{2})|}{k}\textrm{cos}(2 \pi k f t), 
+\end{equation}
+\begin{center}
+missä $ \textrm{sinc}(x) = \frac{\textrm{sin}(\pi x)}{\pi x}$. \\
+\end{center}
+\vspace{3mm}
+\begin{equation} \label{eq:Fkan}
+x_{suorakaide}(t) = \frac{4}{\pi}\sum_{k=1}^{\infty}\frac{\textrm{sin}(2 \pi (2k-1) f t)}{(2k-1)}
+\end{equation}
+\vspace{3mm}
+\begin{equation} \label{eq:Fsaha}
+x_{saha}(t) = -\frac{2}{\pi}\sum_{k=1}^{\infty}\frac{\textrm{sin}(2 \pi k f t)}{k} \vspace{3mm}
+\end{equation}
+\\
+Analogisessa elektroniikassa korkeat taajuudet vaimenevat itsestään, kun taas digitaalisissa järjestelmissä kaistanleveys on tarkasti rajattu, eikä tämän rajan yläpuolella saisi esiintyä lainkaan signaalikomponentteja \cite{Pekonen2014}. Rajoittuneesta kaistanleveydestä aiheutuvaa laskostumisongelmaa käsitellään osiossa \ref{sec:laskostuminen}. 
+
+\clearpage
+
+\section{Laskostuminen} \label{sec:laskostuminen}
+
+Jatkuva-aikaisesta signaalista diskreettiin näytejonoon siirryttäessä Nyquist-Shannon-teoreeman mukaisesti diskreettiaikaisessa (digitaalisessa) järjestelmässä tarvitaan vähintään kaksinkertainen näytteenottotaajuus suurimpaan näytteistettävään signaalitaajuuteen nähden, jotta alkuperäinen signaali voidaan esittää täydellisesti \cite{Sound}. Nyquist-taajuudeksi kutsutaan näytteenottotaajuuden puolikasta. Tätä taajuutta suurempitaajuiset signaalikomponentit laskostuvat, eli summautuvat takaisin Nyquist-taajuuden alapuolelle, mikä aiheuttaa vääristymiä signaaliin. Samalla Nyquist-taajuuden ylittävien komponenttien informaatio menetetään. Taajuuskomponentti, jonka taajuus on $f_s/2+f$ laskostuu takaisin  taajuudelle $f_s/2-f$, missä $f_s$ on näytteenottotaajuus \cite{Pekonen2014}. Laskostuminen kuullaan tyypillisesti epäharmonisena särönä ja kohinamaisena häiriönä. \cite{Lehtonen2012} \\\\
+Kuvassa \ref{fig:laskostuminen} nähdään laskostumisen aiheuttamat ylimääräiset häiriökomponentit signaalin spektrissä, kun näytteistetään triviaalisesti tuotettua saha-aaltoa. Vasemmalla puolella on puhdas saha-aallon spektri, ja oikealla puolella laskostunut tapaus. Saha-aallon perustaajuus oli 1 kHz ja näytteenottotaajuus audiotekniikalle tyypillinen 44,1 kHz. Puhdas spektri tuotettiin laskemalla saha-aallon Fourier-sarjan ensimmäiset 20 taajuuskomponenttia, jolloin suurin taajuuskomponentti asettuu 20 kHz:n taajuudelle eikä Nyquist-taajuutta näin ollen ylitetä. Kaistarajoitetun Fourier-sarjan laskemista käsitellään tarkemmin osiossa \ref{sec:additiivinen}.
+\vspace{4mm}
+\begin{figure}[b] 
+	\begin{center} 
+		\subfigure[]{
+			\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{saha5.pdf}
+		}
+		\subfigure[]{
+			\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{saha5lask.pdf}
+		}
+		\subfigure[]{
+			\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{saha20.pdf}
+		}
+		\subfigure[]{
+			\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{saha20lask.pdf}
+		}
+		\caption{Saha-aallon spektri yhden kilohertsin perustaajuudella: puhdas (a), (c), ja laskostunut (b), (d) tapaus.}
+		\label{fig:laskostuminen}
+	\end{center}
+\end{figure} \\
+Ihmisen kuulon psykoakustisien ominaisuuksien johdosta laskostumista voi kuitenkin esiintyä jonkin verran, ennen kuin se tulee kuultavaksi. Laskostumisen kuultavuus riippuu monista tekijöistä, kuten tuotettavan signaalin perustaajuudesta, harmonisten komponenttien määrästä ja niiden suhteellisista voimakkuuksista ja sijainneista laskostuneisiin komponentteihin nähden. Kuulon kannalta laskostumisen havaitsemiseen vaikuttaa erityisesti kaksi psykoakustiikan ilmiötä: kuulokynnyksen taajuusriippuvuus ja taajuuspeitto. \cite{Pekonen2014, Lehtonen2012} \\\\
+Kuulon herkkyys heikkenee voimakkaasti sekä pienillä että suurilla taajuuksilla, jolloin näillä taajuuksilla esiintyvät tasoltaan pienet laskostuneet komponentit jäävät kuulokynnyksen alapuolelle eli kuulematta. Taajuuspeittoilmiössä taajuusalueella lähekkäin oleva samalle kriittiselle kaistalle osuva voimakas ääni peittää itseään hiljaisemman äänen, eli suhteelliselta tasoltaan tarpeeksi paljon pienempi laskostunut komponentti peittyy likimäärin samalla taajuudella esiintyvän voimakkaamman signaalikomponentin alle. Kuulokynnyksen vaikutus painottuu perustaajuuden alapuolella, eli se rajoittaa perustaajuden alapuolelle peilautuvien häiriöiden kuuluvuutta. Käytännön tilanteissa ja oskillaattorialgoritmeja suunnittellessa riittää näin ollen, että syntyvä laskostuminen ei ole kuultavissa. \cite{Pekonen2014} \\\\
+Lehtonen et al. tutkivat laskostumisen kuultavuutta saha-aallossa kuuntelukokeilla. Kuuntelukokeiden perusteella saatiin minimivaatimukset laskostuneiden komponenttien vaimennukselle saha-aallon tapauksessa. Tästä saadaan edelleen saha-aallon taajuuskomponenttien suurin sallittu taso näytteenottotaajuuden yläpuolella, jolloin vielä laskostuminen pysyy kuulumattomissa. Tutkimuksen tulokset nähdään kuvassa \ref{fig:lehtonen}. Tuloksia voidaan hyödyntää oskillaattorialgoritmien suunnittelussa, kun tiedetään kuinka paljon laskostumista milläkin taajuudella voidaan sallia. \cite{Lehtonen2012}
+\vspace{3mm}
+\begin{figure}[h] 
+\begin{center} 
+\includegraphics[trim={0cm 0cm 2cm 0cm}, clip, width=110mm]{Lehtonen.png}
+\caption{Suurimmat sallitut tasot ensimmäisen kertaluvun laskostuneille komponenteille kun $f_s = 44,1$ kHz \cite[Kuva 3]{Lehtonen2012}. Yhtenäinen viiva kuvan oikeassa laidassa esittää konservatiivisen tason ja pistekatkoviiva realistisemman kynnysarvon.} 
+\label{fig:lehtonen}
+\end{center}
+\end{figure}	
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%
+
+\section{Lähdesignaalien tuottaminen}
+
+Tässä osiossa käsitellään vähentävän synteesin lähdesignaalien tuottamiseen käytettäviä oskillaattorialgoritmeja eli toisin sanoen menetelmiä toteuttaa digitaalisesti osiossa \ref{sec:synteesi} esiteltyjä aaltomuotoja. Oskillaattorialgoritmien tutkimuksessa ja kehittämisessä laskostumisen välttäminen on ollut merkittävässä roolissa. Ideaalisessa tapauksessa laskostumista ei esiinny ollenkaan, mutta käytännön kannalta tietty määrä laskostumista voidaan kuitenkin sallia ilman, että se vaikuttaa syntyvään kuulokokemukseen. \\\\
+Triviaalisesti tuotettua aaltomuotoa audiotekniikalle tyypillisillä näytteenottotaajuuksilla suoraan näytteistämällä saadaan pahasti laskostunut signaali, joka ei äänenlaatunsa puolesta yleensä kelpaa käytettäväksi musiikissa \cite{Nostalgia}. Siksi on täytynyt kehittää digitaalisia menetelmiä, joilla laskostuminen on vähäisempää tai sitä ei tapahdu. Olemassa olevat oskillaattorialgoritmit voidaan jakaa neljään eri ryhmään, jotka ovat ideaalisesti laskostuttomat, melkein laskostuttomat, laskostumisesta vaimentavat sekä ad-hoc-algoritmit. \cite{Pekonen2014, Historia}
+
+\subsection{Ideaalisesti laskostumattomat algoritmit}
+
+Ideaalisesti laskottumattomiksi algoritmeiksi voidaan luokitella menetelmät, jotka tuottavat vain halutun määrän harmonisia taajuuskomponentteja niin, että kaikki komponentit jäävät Nyquist-taajuuden alapuolelle. Koska Nyquist-taajuutta ei ylitetä, laskostumista ei pääse tapahtumaan. Näillä algoritmeillä on mahdollista saavuttaa erittäin hyvä äänenlaatu ja synnytettävien harmonisten komponenttien määrään on helppo vaikuttaa. Kääntöpuolena kategorian menetelmät voivat olla laskennallisesti erittäin raskaita ja sisältää laskennallisia ongelmia tai vaatia suuren määrän muistia. Laskostumattomien algoritmien käytännön toteutukset ovat näin ollen usein kompromisseja äänenlaadun ja laskennallisen tehokkuuden välillä. Yksinkertaisin laskostumaton menetelmä on hyödyntää additiivisen synteesin periaatetta, jota käsitellään seuraavassa luvussa. \cite{Pekonen2014, Historia}
+
+\subsubsection{Additiivinen synteesi} \label{sec:additiivinen}
+
+Haluttu määrä harmonisia komponentteja voidaan tuottaa suoraviivaisesti additiivisella synteesillä. Koska kaikki jaksolliset signaalit ovat esitettävissä siniaaltojen summana, halutut geometriset aaltomuodot voidaan esittää sarjana sini -tai kosiniaaltoja \cite{Sound}. Additiivisessa synteesissä siis nimenmukaisesti lasketaan yhteen yksittäisiä ääneksiä eri taajuuksilla ja amplitudeilla, jotka yhdessä muodostavat haluttua signaalia vastaavan aaltomuodon ja spektrin. Käsiteltävien aaltomuotojen äärettömät Fourier-sarjat esitettiin kappaleessa \ref{sec:synteesi}. Laskemalla vain $n$ ensimmäistä sarjan komponenttia voidaan tuottaa mielivaltainen määrä aaltomuodon harmonisia komponentteja, jolloin saamme kaistarajoitetun approksimaation aaltomuodon ideaalisesta tapauksesta. Kaistarajoitetut Fourier-sarjat saadaan korvaamalla ääretön summa kaavoissa (\ref{eq:Fkol}), (\ref{eq:Fkan}) ja (\ref{eq:Fsaha}) äärellisellä indeksillä $n$, missä $n \in \mathbb{N}$.
+\begin{equation} \label{eq:Fkoln}
+x_{kolmio}(t) = -\frac{4}{\pi}\sum_{k=1}^{n}\frac{|\textrm{sinc}(\frac{k}{2})|}{k} \cos(2 \pi k f t)
+\end{equation}
+\vspace{1mm}
+\begin{equation} \label{eq:Fkann}
+x_{suorakaide}(t) = \frac{4}{\pi}\sum_{k=1}^{n}\frac{\sin(2 \pi (2k-1) f t)}{(2k-1)}
+\end{equation}
+\vspace{1mm}
+\begin{equation} \label{eq:Fsahan}
+x_{saha}(t) = -\frac{2}{\pi}\sum_{k=1}^{n}\frac{\sin(2 \pi k f t)}{k} \vspace{1mm}
+\end{equation} \\
+Kuvassa \ref{fig:sarjat} on esitetty kaistarajoitetut aaltomuodot ja niitä vastaavat spektrit kaavoilla (\ref{eq:Fkoln}), (\ref{eq:Fkann}) ja (\ref{eq:Fsahan}) tuotettuina, kun summaa lasketaan vain indeksiin $n = 20$ asti.
+\vspace{1mm}
+\begin{figure}[h] 
+\begin{center} 
+\newcommand{\figsize}{71mm}
+\subfigure[Kolmioaalto]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=\figsize]{kolmiosarja.pdf}
+	\label{fig:kolmiosarja}
+	}
+\subfigure[Kolmioaallon spektri]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=\figsize]{kolmiospektri.pdf}
+	\label{fig:kolmiospektri}
+	}	
+\subfigure[suorakaideaalto]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=\figsize]{suorakaidesarja.pdf}
+	\label{gibbs}
+	}
+\subfigure[suorakaideaallon spektri]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=\figsize]{suorakaidespektri.pdf}
+	\label{fig:kanttispektri}
+	}	
+\subfigure[Saha-aalto]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=\figsize]{sahasarja.pdf}
+	\label{fig:sahasarja}
+	}
+\subfigure[Saha-aallon spektri]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=\figsize]{sahaspektri.pdf}
+	\label{fig:sahaspektri}
+	}			
+\caption{Geometriset aaltomuodot summakaavoilla tuotettuina, $n = 20, f = 100$ Hz.}
+\label{fig:sarjat}
+\end{center}
+\end{figure} \\
+Kuvan \ref{fig:sarjat} kohdissa (c) ja (e) nähdään niin sanottu Gibbsin ilmiö: epäjatkuvuuskohtiin syntyy äärellisellä määrällä taajuuskomponentteja noin yhdeksän prosentin huippuarvon ylitys, mikä johtuu pohjimmiltaan siitä, että yritetään esittää epäjatkuvaa signaalia äärellisellä määrällä jatkuvia signaaleita \cite{Sound}. \\\\
+Additiivista synteesiä käyttämällä voidaan laskostumiselta välttyä kokonaan, mutta menetelmä on laskennallisesti raskas etenkin kun lasketaan suuri määrä taajuuskomponentteja. Tuotettavien komponenttien määrä on kääntäen verrannollinen perustaajuuteen, kun lasketaan kaikki Nyquist-taajuuden alle jäävät komponentit. Näin ollen laskennallinen kuorma ei pysy vakiona vaan kasvaa perustaajuuden pienentyessä. Tuotettavien komponenttien määrää voidaan rajata esimerkiksi lopettamalla sarjan laskeminen, kun määrätty vaimennustaso suhteessa perustaajuuteen on saavutettu tai laskemalla vaikka vain kymmenen ensimmäistä komponenttia, millä voidaan pienentää laskennallista taakkaa huomattavasti. Aaltomuodoille saadaan usein riittävän hyvä approksimaatio jo varsin pienellä määrällä taajuuskomponentteja. \cite{Pekonen2014, Nostalgia, Sound} \\\\
+Additiivinen synteesi on mahdollista toteuttaa myös taajuusalueesta liikkeelle lähtien käyttämällä käänteistä Fourier-muunnosta. Tässä tapauksessa tuotetaan ensiksi haluttua signaalia vastaava spektri, jolle lasketaan niin sanottu nopea Fourier-muunnos (\textit{fast Fourier transform, FFT}) käänteisenä. Näin saadaan tuotettua taajuuskomponentteja vastaava aikasignaali. \cite{Pekonen2014, Stilson1996}
+
+\subsubsection{Aaltotaulukkosynteesi}
+
+Additiivisen menetelmän laskennallinen raskaus voidaan välttää käyttämällä aaltotaulukkosynteesiä (\textit{wavetable synthesis}). Funktioiden jaksollisuuden ansiosta riittää, että lasketaan etukäteen valmiiksi yksittäisiä jaksoja aaltomuodosta eri perustaajuuksilla, ja tallennetaan ne taulukoihin. Lukemalla taulukkoa peräkkäin saadaan aikaiseksi jatkuva signaali, jota voidaan edelleen moduloida aikamuuttuvilla parametreilla mielenkiintoisemman äänen aikaansaamiseksi. Taajuutta voidaan muuttaa siirtymällä aaltotaulukoiden välillä tai vaihtoehtoisesti lukemalla taulukkoa eri nopeudella. Aaltotaulukkosynteesi tarjoaa myös yksinkertaisen oikotien todenmukaiseen analogisynteesiin: oikean analogisyntetisaattorin oskillaattorien tuottama signaali voidaan nauhoittaa ja tallentaa suoraan aaltotaulukkoon. \cite{Valimaki2007, Pekonen2014} \\\\
+Aaltotaulukkosynteesi on lähdesignaalin tuottamisen kannalta sinänsä laskennallisesti tehokas menetelmä etenkin additiiviseen synteesin verrattuna, mutta sen sijaan muistivaatimukset kasvavat nopeasti suuriksi, kun aaltotaulukoita on paljon. Lisäksi aaltotaulukkosynteesin käytännön toteutus ei ole täysin ongelmaton, vaan menetelmä vaatii interpolaatiota näytteiden lukemiseen, kun haluttu taajuus ei ole kokonaislukukerroin aaltotaulukkoon tallennetusta perustaajuudesta. Interpolaatioalgoritmin laadusta riippuen interpolointi voi aiheuttaa kuultavia häiriöitä lopputulokseen. \cite{Valimaki2007, Pekonen2014, Stilson1996}
+
+\subsubsection{DSF}
+
+Kaistarajoitettu sarja siniääniä voidaan esittää vaihtoehtoisesti kahden sinifunktion suhteena, jolloin haluttu määrä komponentteja voidaan laskea samanaikaisesti yhdellä kaavalla ja laskutoimituksella. Menetelmästä käytetään nimitystä diskreetti summauskaava DSF (\textit{discrete summation formula}). Laskutapa perustuu geometrisen sarjan summaan \cite{Stilson1996, Lowenfels2003}
+\begin{equation}
+\sum_{k=0}^{N-1}z^k = \frac{1-z^N}{1-z}
+\end{equation} \\
+Tällä kaavalla laskettuna kaikkien harmonisten komponenttien amplitudi on kuitenkin sama, kun todellisuudessa spektrin tulisi olla laskeva kuten kuvassa \ref{fig:sarjat} nähtiin. Täten DFS-menetelmällä tuotettua signaalia joudutaan alipäästösuodattamaan oikeanlaisen spektrin saavuttamiseksi. Myös jakolaskuoperaatio itsessään aiheuttaa ongelmia, kun jakajana on nolla tai hyvin lähellä nollaa oleva arvo. Tämä monimutkaistaa menetelmän käyttöä, kun nämä jakolaskuun liittyvät ongelmatilanteet joudutaan tarkastelemaan erikseen. \cite{Pekonen2014, Nostalgia}
+
+\subsection{Melkein laskostumattomat algoritmit}
+
+Geometristen aaltomuotojen epäjatkuvuuskohtia voidaan pehmentää, eli pyöristää teräviä kulmia aaltomuodoissa, jolloin laskostuminen on vähäisempää. Tähän kategoriaan kuuluvien algoritmien voidaan siis käsittää tuottavan alipäästösuodatettuja versioita ideaalisista aaltomuodoista. Kun lisäksi muistetaan osiossa \ref{sec:laskostuminen} esitellyt laskostumisen havaitsemiseen liittyvät psykoakustiset tekijät, algoritmeissa voidaan sallia jokin määrä laskostumista etenkin korkeilla taajuuksilla ilman, että se haittaa kuultavasti lopputulosta. Vanhin näistä menetelmistä on seuraavaksi käsiteltävä BLIT. \cite{Pekonen2014, Nostalgia}
+
+\subsubsection{BLIT}
+
+Tim Stilson ja Julius Smith esittelivät vuonna 1996 kaistarajoitettuun impulssijonoon (\textit{bandlimited impulse train}) perustuvan oskillaattorialgoritmin \cite{Stilson1996}. Tiedetään, että derivoimalla kolmioaaltoa ajan suhteen saadaan suorakaideaaltoa, ja edelleen suorakaideaalto ja saha-aalto kertaalleen derivoimalla jäljelle jää jono aaltomuotojen epäjatkuvuuskohdissa sijaitsevia yksikköimpulsseja $\delta(t)$, missä
+\begin{equation}
+\delta(t) = \left\{
+  \begin{array}{lr}
+    1 & \ \ , \text{kun} \ t = 0 \\
+    0 & ,\text{muulloin}.
+  \end{array}
+\right.
+\end{equation}
+Yksikköimpulssijono voidaan esittää summana viivästettyjä yksikköimpulsseja
+\begin{equation}
+x(t) = \sum_{k=-\infty}^{\infty}\delta(t-kT),
+\end{equation}
+\begin{center}
+missä $T$ on jaksonaika.
+\end{center}
+Tästä impulssijonosta saadaan kaistarajoitettu alipäästösuodattamalla se, mikä voidaan toteuttaa konvoloimalla impulssijono jonkin alipäästösuodattimen impulssivasteen $h_{s}(t)$ kanssa:
+\begin{equation} \label{konvoluutio}
+x_{s}(t) = (x * h_{s})(t) = \sum_{k=-\infty}^{\infty}h_s(t-kT) \vspace{1mm}
+\end{equation}
+Kaavasta \ref{konvoluutio} nähdään, että impulssijonon tapauksessa konvoluutio vastaa suoraan jokaisen impulssin korvaamista suodattimen impulssivasteella. Integroimalla suodatettua impulssijonoa saadaan tuotettua likimäärin kaistarajoitettuja aaltomuotoja. Suorakaide- ja saha-aallot saadaan kertaalleen integroimalla sopivaa impulssijonoa ja kolmioaalto kahdesti integroimalla. \cite{Valimaki2007, Pekonen2014, Stilson1996} \\\\
+BLIT -synteesissä käytetään alipäästösuodattimena tyypillisesti sinc-funktiota, joka vastaa ideaalista alipäästösuodatinta taajuustasossa, sillä suorakaidepulssin käänteisenä Fourier-muunnoksena saadaan aikatason sinc-funktio. Nämä esitetään kuvassa \ref{fig:sinc}. Koska sinc-funktio on äärettömän pitkä, täytyy se ikkunoida käytännön toteutuksia varten. Ikkunoinnissa funktiosta muodostetaan äärellisen pituinen versio ottamalla siitä halutun levyinen kaistale, joka painotetaan ikkunafunktion muodolla. Tyypillisesti tämä ikkunoitu sinc-funktio esilasketaan valmiiksi taulukkoon. Tästä menetelmän erikoistapauksesta käytetään nimitystä BLIT-SWS (\textit{sum of windowed sincs}). \cite{Valimaki2007, Stilson1996}
+\begin{figure}[h] 
+\begin{center} 
+\subfigure[Sinc-funktio]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{sinc.pdf}
+	}
+\subfigure[Suorakulmainen pulssi]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{rect.pdf}
+	}	
+\caption{Ideaalinen alipäästösuodatin (a) aikatasossa ja (b) taajuustasossa. Taajuusakselilla nähdään normalisoitu taajuus $f_N = f/f_s$, jolloin Nyquist-taajuus saa arvon $0,5$ ja näytteenottotaajuus arvon $1$.}
+\label{fig:sinc}
+\end{center}
+\end{figure} \\
+BLIT-menetelmässä integrointi voi tuottaa ongelmia numeerisista epätarkkuuksista johtuen, kun impulssijonon arvot poikkeavat tarkoista arvoista esimerkiksi pyöristysvirheiden takia. Ongelma voidaan korjata käyttämällä toisen asteen vuotavaa integraattoria \cite{Stilson1996, Brandt2001}. BLIT-algoritmia voidaan parantaa edelleen monella tavalla, esimerkiksi optimoimalla suodatinfunktiota ja sen esilaskettua taulukkoa \cite{Pekonen2014, Valimaki2012}. Taulukko voidaan myös jakaa monivaihesuodatinrakenteeksi \cite{Valimaki2007}. Tarve esilasketulle taulukolle voidaan välttää kokonaan hyödyntämällä murtoviiveisiä suodattimia (\textit{fractional delay filter}) ikkunoidun sinc-funktion sijaan, joita käyttämällä voidaan myös vähentää laskostumista merkittävästi (BLIT-FDF) \cite{Nam2010}.
+
+\subsubsection{BLEP}
+
+Brandt esitteli vuonna 2001 BLIT-menetelmään pohjautuvan kehittyneemmän oskillaattorialgoritmin \cite{Brandt2001}. Geometriset aaltomuodot voidaan muodostaa myös yksikköaskelfunktion $u(x)$ avulla, missä
+\begin{equation}
+u(x) = \int_{-\infty}^x \! \delta(t) \, \mathrm{d}t =
+\left\{
+  \begin{array}{lr}
+    0	& ,x < 0 \\
+    0.5 & ,x = 0 \\
+    1 &, x > 0 
+  \end{array}
+\right. \vspace{1mm}
+\end{equation}
+Näin ollen BLIT:n numeeriset ongelmat voidaan välttää integroimalla kaistarajoitettu impulssi etukäteen, jolloin saamme kaistarajoitetun askelfunktion (BLEP, \textit{bandlimited step function}). Korvaamalla jokainen askelmainen epäjatkuvuuskohta aaltomuodossa tällä kaistarajoitetulla askelfunktiolla saadaan lopputuloksena likimäärin kaistarajoitettu signaali. \cite{Valimaki2012} \\\\
+Brandt ehdotti myös ikkunoidun sinc-funktion korvaamista sen amplitudivastetta vastaavalla minimivaiheisella FIR -suodattimella, joka integroimalla saadaan minimivaiheinen BLEP -funktio.
+Menetelmästä käytetään nimitystä MinBLEP (\textit{minimum-phase bandlimited step}) \cite{Brandt2001}. Kuvassa \ref{fig:blep} esitetään yksikköaskelfunktio ja minimivaiheinen BLEP.
+\vspace{2mm}
+\begin{figure}[h] 
+\begin{center} 	
+\subfigure[Askelfunktio]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{askelfunktio.pdf}
+	\label{fig:askel}
+	}
+\subfigure[MinBLEP]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{minblep.pdf}
+	\label{fig:minblep}
+	}	
+\caption{(a) Yksikköaskelfunktio $u(t)$ ja (b) minimivaiheinen kaistarajoitettu askelfunktio. Aika näyteajan $Ts = 1/Fs$ moninkertana.}
+\label{fig:blep}
+\end{center}
+\end{figure} \\
+Välimäki et al.  johtivat ideaalisen kaistarajoitetun askelfunktion, joka voidaan esittää sini-integraalin avulla \cite{Valimaki2012}
+\begin{equation}
+h_{Is}(t) = \frac{1}{2}+\frac{1}{\pi}\text{Si}(\pi \alpha f_s t),
+\end{equation}
+\begin{center}
+missä $\alpha \in [0,1]$ on skaalauskerroin rajataajuudelle ja
+\end{center}
+\vspace{1mm}
+\begin{equation}
+Si(x) =  \int_{0}^x \! \frac{\text{sin}(t)}{t} \ \mathrm{d}t = \sum_{n=0}^{\infty} \\ 
+\frac{(-1)^n x^{2n+1}}{(2n+1)(2n+1)!}
+\end{equation} \\
+\clearpage \noindent
+Käytännön toteutuksia varten tämä ideaalinen BLEP -funktio täytyy ikkunoida, sillä se on äärettömän pituinen sinc-funktion tapaan. Laskennallisesti tehokas tapa toteuttaa algoritmi on hyödyntää ideaalisen BLEP -funktion residuaalia eli jäännösvirhettä, joka saadaan vähentämällä ideaalisesta BLEP -funktiosta yksikköaskelfunktio. Ikkunoinnin jälkeen tämä jäännösvirhe voidaan lisätä suoraan triviaalisesti tuotetun aaltomuodon epäjatkuvuuskohtiin, jolloin saadaan likimäärin kaistarajoitettu versio aaltomuodosta. Laskevalla askeleella residuaali täytyy kuitenkin kääntää ylösalaisin. Ideaalinen kaistarajoitettu askelfunktio ja jäännösvirhe esitetään kuvassa \ref{fig:iblep}. \cite{Valimaki2007, Pekonen2014, Valimaki2012} 
+\begin{figure}[h] 
+\begin{center} 
+\subfigure[Ideaalinen BLEP]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{blep.pdf}
+	}
+\subfigure[Jäännösvirhe]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{blepres.pdf}
+	\label{fig:res}
+	}		
+\caption{(a) Ideaalinen kaistarajoitettu askelfunktio $h_{Is}(t)$ ja yksikköaskel $u(t)$ (katkoviivalla), (b) jäännösvirhe $h_{Is}(t)-u(t)$. Aika näyteajan $Ts = 1/Fs$ moninkertana.}
+\label{fig:iblep}
+\end{center}
+\end{figure} \\
+BLEP-menetelmä voidaan myös toteuttaa muodostamalla kaistarajoitettu approksimaatio yksikköaskeleesta integroimalla polynomisia suodatinfunktioita, joista saadaan muodostettua BLEP-residuaali aikaisempaan tapaan. Menetelmästä käytetään nimitystä PolyBLEP (\textit{polynomial bandlimited step function}), ja suodatinfunktioina käytetään polynomisia interpolaatiofunktioita. Yksinkertainen approksimaatio saadaan lineaarisella interpolaatiolla, joka vastaa kolmiomaista pulssia, ja parempiin tuloksiin päästään kasvattamalla polynomin astelukua. Menetelmä on yleistetty mielivaltaiselle polynomin asteluvulle, kun käytetään Lagrangen tai B-splini--interpolaatiota. Neljännen asteen Lagrange- ja B-splini--polynomeilla päästään laskostumisvapaaseen tulokseen yli viiden kilohertsin perustaajuuksille saakka, mikä riittää hyvin kattamaan kaikki perinteisen 88-koskettimisen pianon perustaajuudet, sillä pianon korkeimman sävelen $C_8$ perustaajuus on noin 4,2 kHz. \cite{Valimaki2007, Pekonen2014, Sound, Valimaki2012} 
+
+\subsection{Laskostumista vaimentavat algoritmit}
+
+Laskostumista vaimentavat algoritmit poikkeavat kahdesta edellisestä kategoriasta siinä, että ne sallivat laskostumista koko audiokaistalla. Laskostumisen estämisen sijaan näissä algoritmeissä pyritään vaimentamaan laskostuneiden komponenttien voimakkuutta muokkaamalla spektrin muotoa ennen näytteistämistä, jolloin parhaassa tapauksessa laskostumista ei kuulla. Spektrin muokkaaminen vääristää tietysti aaltomuotoa, joten näytteistämisen jälkeen spektri täytyy palauttaa oikeanlaiseksi sopivalla ylipäästösuodattimella. Laskostumista vaimentavien menetelmien esiasteena voidaan pitää triviaalisesti tuotettujen aaltomuotojen ylinäytteistämistä eli näytteenottotaajuuden moninkertaistamista, mitä käsitellään seuraavassa osiossa.
+
+\subsubsection{Ylinäytteistäminen}
+
+Triviaalisti tuotetut aaltomuodot laskostuvat pahasti etenkin saha -ja suorakaideaallon osalta, koska niiden taajuuskomponentit vaimenevat hitaasti, eli toisin sanoen aaltomuotojen spektri laskee hyvin loivasti. Siksi Nyquist-taajuuden ylittävillä komponenteilla on vielä suhteellisen suuri magnitudi, mikä johtaa tasoltaan suuriin laskostuneisiin komponentteihin. Kuvassa \ref{fig:saha100} nähdään saha- ja kolmioaallon taajuuskomponenttien vaimeneminen aina 100 kHz saakka. Saha- ja suorakaideaallolla spektri laskee kuusi desibelia oktaavilla (taajuuden kaksinkertaistuminen) eli 20 dB dekadia (taajuuden kymmenkertaistuminen) kohden. Kolmioaallon spektri vaimenee sen sijaan kaksi kertaa jyrkemmin, eli 12 dB oktaavilla ja 40 dB dekadilla. \\
+\begin{figure}[ht] 
+\begin{center} 	
+\subfigure[]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{saha100.pdf}
+	\label{fig:sahalin}
+	}
+\subfigure[]{
+	\includegraphics[trim={0cm 0cm 0.2cm 0cm}, clip, width=71mm]{kolmio100.pdf}
+	\label{fig:kolmiolin}
+	}	
+\caption{(a) Saha-aallon ja (b) kolmio-aallon taajuusvasteen vaimeneminen lineaarisella taajuusasteikoilla, $n = 100, f = 1$ kHz, $F_s = 262$ kHz.}
+\label{fig:saha100}
+\end{center}
+\end{figure} \\
+Näytteenottotaajuutta kasvattamalla Nyquist-taajuuden ylittävien komponenttien magnitudi pienenee, jolloin myös laskostuneiden komponenttien taso laskee. Kuvan \ref{fig:saha100} perusteella näytteenottotaajuuden kaksinkertaistaminen laskee laskostumisen tasoa vain 6 dB:n verran saha- ja suorakaideaallon tapauksessa. Tästä seuraa, että pelkkä ylinäytteistäminen itsessään on hyvin epätehokas menetelmä laskostumisen vaimentamiseen. Hyvän vaimennussuhteen saavuttaminen saha -ja suorakaideaallolla vaatisi erittäin suuren näytteenottotaajuuden, esimerkiksi kuvan \ref{fig:saha100} saha-aallon tapauksessa 60 dB vaimennus saavutetaan vasta 1 MHz taajuuskomponentilla, joka puolestaan vaatisi 2 MHz:n näytteenottotaajuuden, mikä ei ole toteutettavissa käytännön sovelluksissa. \\\\
+Kolmioaallon tapauksessa puolestaan laskostumista esiintyy huomattavasti vähemmän jyrkemmän spektrin ansioista. Käytännössä jo 44,1 kHz:n näytteenottotaajuudella alle yhden kilohertsin perustaajuuksilla laskostuminen on melko vähäistä. Tämän kaksinkertaisella ylinäytteistyksellä, eli näytteenottotaajuudella 88,2 kHz laskostuneiden komponenttien taso jää hyvin pieneksi yli neljän kilohertsin perustaajuuksille saakka, mikä riittää kattamaan yleensä kaikki musikaalisesti kiinnostavat perustaajuudet. Kolmioaallon tapauksessa jo kohtuullisella ja helposti toteuttettavissa olevalla ylinäytteistämisellä saadaan triviaalin tapauksen laskostumista vaimennettua huomattavasti. Ylinäytteistämisellä saatavia tuloksia esitellään yksityiskohtaisemmin osiossa \ref{sec:ylinäytsim}. \\\\
+Yksi ensimmäisistä varsinaisista spektrin muokkaamiseen perustuvista menetelmistä oli Lane et al. vuonna 1997 esittelemä saha-aaltoalgoritmi, jossa kokoaaltotasasuunnataan sini-aalto, jonka taajuus on puolet halutusta perustaajuudesta. Saadun signaalin spektri laskee saha-aaltoa jyrkemmin, ja näytteistämisen jälkeen saha-aallon aaltomuotoon päästään takaisin käyttämällä perustaajuudesta riippuvaa ylipäästösuodatinta sekä kiinteän taajuuden alipäästösuodatinta. Suorakaide -ja kolmioaalto voidaan tuottaa saadusta saha-aallosta. \cite{Pekonen2014, Valimaki2005}    
+
+\subsubsection{DPW}
+
+Välimäki esitteli uuden polynomisten aaltomuodon derivoimiseen perustuvan laskennallisesti tehokkaan menetelmän vuonna 2005 \cite{Valimaki2005}. Alunperin menetelmällä voitiin tuottaa saha-aaltoa muistuttavaa aaltomuotoa derivoimalla paloittain määriteltyä parabolista aaltoa, ja sittemmin menetelmä on laajennettu myös muille aaltomuodoille ja suuremmille asteluvuille \cite{Valimaki2006, Valimaki2010}. Menetelmän nimi tulee sanoista differentioitu polynominen aaltomuoto (\textit{differentiated polynomial waveform}). \\\\ 
+Perusmenetelmässä aloitetaan integroimalla saha-aalto ajan suhteen, jolloin saadaan parabolisista osioista koostuva aaltomuoto. Saha-aallon yksi jakso voidaan esittää lineaarisena funktiona ajan suhteen, jolloin integraaliksi saadaan \vspace{1mm}
+\begin{equation}
+\label{eq:integraali}
+p(t) = \int \! t \mathrm{d}t = \frac{t^2}{2}, \ \ \text{kun} \ \frac{-T}{2} \leq t \leq \frac{T}{2} \vspace{1mm}
+\end{equation}
+missä $T$ on yhden jakson pituus. Tämä esitetään kuvassa \ref{fig:dpw}. \cite{Valimaki2005}
+\vspace{2mm}
+\begin{figure}[ht] 
+\begin{center} 	
+\subfigure[$t, -1\leq t \leq 1$]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{sahastem.pdf}
+	}
+\subfigure[$p(t) = t^2/2$]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{parastem.pdf}
+	}	
+\caption{(a) lineaarinen funktio ja (b) sen integraali ajan suhteen. Vaaka-akselin arvot näytteinä.}
+\label{fig:dpw}
+\end{center}
+\end{figure} \\
+\clearpage \noindent
+Koska parabolisen aaltomuodon spektri laskee kaksi kertaa jyrkemmin kuin saha-aallon, saadaan laskostumista vaimennettua näytteistämällä tätä signaalia. Näytteistyksen jälkeen oikeanlainen spektri palautetaan ensiksi derivoimalla, jonka jälkeen signaali täytyy vielä skaalata kertoimella
+\begin{equation}
+c = \frac{f_s}{4f_0(1-\frac{f_0}{f_s})}.
+\end{equation}
+Yksinkertainen tapa tuottaa ideaalista saha-aaltoa digitaalisesti on hyödyntää jakojäännöstä. Diskreettiaikainen vaihesignaali voidaan muodostaa
+\begin{equation}
+p(n) = n f_0 T \ \text{mod} \ 1,
+\end{equation}
+josta edelleen saadaan välille -1 ja 1 skaalattu saha-aalto toteutettua niin sanottuna bipolaarisena jakojäännöslaskurina (\textit{bipolar modulo counter})
+\begin{equation}
+\label{eq:bmc} 
+s(n) = 2 p(n) -1 = 2 (n f_0 T \ \text{mod} \ 1) -1.
+\end{equation}
+Vaihesignaali $p(n)$ ja jakojäännöslaskuri $s(n)$ esitetään kuvassa \ref{fig:dpw2}.
+\vspace{2mm}
+\begin{figure}[ht] 
+\begin{center} 	
+\subfigure[$p(n)$]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{phi.pdf}
+	}
+\subfigure[$s(n)$]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{bmc.pdf}
+	}	
+\caption{(a) Diskreettiaikainen vaihesignaali ja (b) jakojäännöslaskuri. Vaaka-akselin arvot näytteinä.}
+\label{fig:dpw2}
+\end{center}
+\end{figure} \\
+Jakojäännöslaskurin signaali voidaan korottaa suoraan toiseen potenssiin parabolisen signaalin tuottamiseksi, ja lopuksi signaali derivoidaan ja skaalataan. Derivaattori voidaan toteuttaa eri tavoilla, joista yksinkertaisin on ensimmäisen asteen FIR-suodin siirtofunktiolla
+\begin{equation}
+h(z) = \frac{1-z^{-1}}{2}, \vspace{1mm}
+\end{equation}
+joka on niin sanottu ensimmäisen eron suodatin (\textit{first-difference filter}). \cite{Valimaki2006, Valimaki2005} \\\\
+Perusalgoritmia voidaan parantaa hyödyntämällä ylinäytteistystä, missä parabolinen aaltomuoto tuotetaan moninkertaisella näytteenottotaajuudella, jolloin laskostumista saadaan vaimennettua lisää. Lopuksi näytetaajuus lasketaan takaisin alkuperäiselle tasolle. Esimerkiksi kaksinkertaisen ylinäytteistyksen tapauksessa tämä voidaan toteuttaa ensiksi alipäästösuodattamalla uuden Nyquist-taajuuden ylittävät komponentit, jonka jälkeen joka toinen näyte jätetään välistä. \cite{Valimaki2005} \\
+Suorakulmaista aaltomuotoa, ja edelleen sen erikoistapauksena suorakaide-aaltoa, voidaan tuottaa vähentämällä kaksi sopivalla vaihe-erolla olevaa saha-aaltoa toisistaan. DPW:tä voidaan käyttää myös kolmioaallon tuottamiseen derivoimalla bipolaarista parabolista aaltomuotoa \cite{Valimaki2006}. Tämä parabolinen aalto voidaan muodostaa jakojäännöslaskurin (kaava \ref{eq:bmc}) avulla
+\begin{equation}
+s_b(n) = s(n)[1-|s(n)|],
+\end{equation}
+missä termi $[1-|s(n)|]$ vastaa siirrettyä kokoaaltotasasuunnattua saha-aaltoa. Nämä esitetään kuvassa \ref{fig:kaksi}. Derivoimalla ja skaalaamalla tämä parabolinen aalto saadaan kolmiomaista aaltomuotoa vaimennetulla laskostumisella. \cite{Valimaki2010}
+\vspace{2mm}
+\begin{figure}[h] 
+\begin{center}
+\subfigure[$1-|s(n)|$]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{frs.pdf}
+	}
+\subfigure[$s_b(n)$]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{bp.pdf}
+	}	
+\caption{(a) Siirretty kokoaaltotasasuunnattu saha-aalto ja (b) bipolaarinen parabolinen aalto. Vaaka-akselin arvot näytteinä.}
+\label{fig:kaksi}
+\end{center}
+\end{figure} \\
+Välimäki et. al laajensivat DPW-menetelmän suurempiastelukuisille polynomeille vuonna 2010 \cite{Valimaki2010}. Laskostumista voidaan vaimentaa tehokkaammin käyttämällä suurempia astelukuja, sillä jokainen asteluvun kasvatus jyrkentää polynomisen aaltomuodon spektriä aina 6 dB. Vastaavasti jokaista asteluvun korotusta kohti tarvitaan yksi derivointi lisää sekä uusi skaalauskerroin. Sopiva mielivaltaisen asteluvun polynomi voidaan johtaa analyyttisesti integroimalla kaavaa (\ref{eq:integraali}), tai ratkaisemalla suoraan polynomiyhtälön kertoimet tunnettujen ehtojen avulla. Suurempiastelukuiset polynomiset aaltomuodot voidaan johtaa sekä saha- että kolmioaallolle. Lisäksi huomattiin, että suorakaide-aalto voidaan tuottaa suoraan kolmiomaisesta aaltomuodosta sopivasti käsittelemällä ja derivoimalla, joka pätee myös suuremmille asteluvuille. \cite{Valimaki2010, Kleimola2013} \\\\
+Suurempien astelukujen kanssa voidaan vielä lisäksi käyttää ylinäytteistämistä perusmenetelmän tapaan. Ylinäytteistämällä laskostumista saadaan vähennettyä etenkin matalilla taajuuksilla perustaajuuden alapuolella, ja ylinäytteistyksellä saatava hyöty kasvaa asteluvun mukana. Käytännössä ylinäytteistystä ei kuitenkaan yleensä kannata käyttää, koska sen tuoma lisäys laskennalliseen kuormaan on usein suurempi kuin asteluvun kasvattamisen aiheuttama kuorma ja asteluvun kasvatus vaimentaa laskostumista tehokkaammin kuin näytetaajuuden kaksinkertaistaminen. \cite{Valimaki2010} \\\\
+\clearpage \noindent
+Laskennallisen analyysin perusteella saha-aallon tapauksessa kaksiasteisella perus-DPW:llä laskostuminen saattaa tulla kuuluviin yli 600 Hz:n perustaajuuksilla, kun näytteenottotaajuus on 44,1 kHz. Jo neljännen asteen DPW on puolestaan havainnon kannalta laskostumisvapaa noin 4,6 kHz:n perustaajuudelle saakka, mikä riittää yleensä hyvin käytännön sovelluksissa. Neljännen asteen DPW-oskillaattorilla saatavia tuloksia esitellään tarkemmin osiossa \ref{sec:dpw}. Laskennallisesti tehokas tapa toteuttaa laskostumisvapaa DPW-oskillaattori on käyttää kaksi-asteista algoritmia pienien perustaajuuksien tuottamiseen ja siirtyä neljännen asteen versioon korkeampia perustaajuuksia varten. Suositeltu siirtymätaajuus astelukujen välillä on noin 500 Hz. \cite{Valimaki2010}
+
+\subsubsection{PTR}
+
+Kleimola ja Välimäki huomasivat DPW-algoritmin muokkaavan ideaalista saha-aaltoa vain rajatulla alueella epäjatkuvuuskohdan ympärillä muiden näytteiden ollessa vain tasoltaan hieman siirtyneitä \cite{Kleimola2012}. Lisäksi epäjatkuvuuskohdan ympärille tehdyt muutokset vastaavat muodoltaan suoraan polynomia. Näiden havaintojen perusteella  DPW-menetelmästä voidaan tuottaa uusi vähemmän laskutoimituksia vaativa ja monipuolisempi oskillaattorialgoritmi, jota kutsutaan polynomisien siirtymäalueiden algoritmiksi (\textit{polynomial transition regions}). \cite{Kleimola2013, Kleimola2012} \\\\
+DPW-algoritmissä aaltomuodon kahden peräkkäisen jakson välinen siirtymäalue alkaa jakojäännösoperaation kohdalta (askelmainen epäjatkuvuuskohta), ja siirtymäalueen leveys $W = N-1$ näytettä, missä $N$ on DPW:n asteluku. Kuvassa \ref{fig:huomio} nähdään triviaali saha-aalto  jakojäännöslaskurilla toteutettuna ja neljännen asteen DPW-algoritmillä tuotettu saha-aalto sekä kuvassa \ref{fig:ero} näiden kahden erotus.
+\vspace{2mm}
+\begin{figure}[h] 
+\begin{center}
+\subfigure[]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{ptrhuomio.pdf}
+	\label{fig:huomio}}
+\subfigure[]{
+	\includegraphics[trim={0.2cm 0cm 0.2cm 0cm}, clip, width=71mm]{ptrero.pdf}
+	\label{fig:ero}}	
+\caption{(a) Triviaali saha-aalto (ympyrä) ja neljännen asteen DPW saha-aalto (neliö), sekä (b) näiden kahden erotus. Kuvassa $f_0 = 2400 $ Hz ja $f_s = 48$ kHz.}
+\label{fig:ptr}
+\end{center}
+\end{figure} \\
+Kuvissa havaitaan teorian mukainen siirtymäalue $W = 3$, jolla DPW aaltomuodon näytearvot poikkeavat triviaalista aaltomuodosta. Siirtymäalueen ulkopuolella olevilla näytteillä havaitaan pelkästään vakioarvoinen vaihesiirtymä (\textit{offset}), jonka arvo on $c_{dc} = WT_0$, missä $W$ on siirtymäaluen leveys näytteinä ja $T_0 = f_0/f_s$. \cite{Kleimola2012} \\\\
+Näin ollen DWP-algoritmin tuottama saha-aaltosignaali voidaan jakaa kahteen osioon, jotka ovat polynomiset siirtymäalueet ja vakiolla siirretty triviaali saha-aalto
+\begin{equation}
+y(n) = \left\{
+  \begin{array}{lr}
+    s(n) - c_{dc} + D(n) 	& \ \ , \text{kun} \ p(n) < WT_0 \\
+    s(n) - c_{dc} 		 	& ,  \text{kun} \ p(n) \geq WT_0
+  \end{array}
+\right.
+\end{equation}
+missä $D(n)$ korjauspolynomi \cite{Koodi}. Yleinen PTR-algoritmi voidaan määritellä 
+\begin{equation}
+y(n) = \left\{
+  \begin{array}{lr}
+    x(n) - c_{dc} + D(n)	& \ \ , \text{kun} \ p(n) < WT_0 \\
+    x(n) - c_{dc}  		 	& ,  \text{kun} \ p(n) \geq WT_0
+  \end{array}
+\right.
+\end{equation}
+missä $x(n)$ on tulosignaali. PTR-menetelmässä riittää siis, että triviaalisesti tuotettua sisääntulosignaalia muokataan korjauspolynomilla vain siirtymäalueen sisällä, ja muulloin voidaan käyttää suoraan triviaalia signaalia vaihesiirrettynä. Koska siirtymäalueen pituus on yleensä jaksonpituutta paljon pienempi, laskutoimituksien määrää saadaan vähennettyä huomattavasti DPW:hen verrattuna, missä algoritmia lasketaan jokaiselle näytteelle. Vaadittavien aritmeettisien laskutoimituksien määrää tarkastelemalla PTR:lla saavutetaan yli 40 prosentin parannus DPW:hen nähden.  DPW:n toteutuksilla saavutettava hyvä laskostumisen vaimentuminen pysyy PTR-menetelmässä ennallaan. PTR-algoritmia voidaan käyttää saha-aallon lisäksi muille aaltomuodoille, myös ei-derivoituville, toisin kuin DPW:ssä. Menetelmää voidaan soveltaa myös muihin käyttötarkoituksiin ja synteesimenetelmiin vähentävän synteesin lisäksi. \cite{Kleimola2013, Kleimola2012} \\\\
+Ambrits ja Bank osoittivat, että PTR-menetelmän laskennallista tehokkuutta voidaan parantaa vielä lisää eliminoimalla tarve vaihesiirrolle. Menetelmästä käytetään nimitystä EPTR eli tehokas PTR (\textit{efficient PTR}). Esimerkiksi toisen asteen DPW-algoritmin tuottama saha-aalto on puoli näytettä jäljessä triviaalisesta aallosta, jolloin yksinkertaisin tapa välttää vaihesiirto PTR-algoritmissä on käyttää tulosignaalina puoli näytettä haluttua signaalia edellä olevaa triviaalia saha-aaltoa, ja näin yhteenlaskua termin $c_{dc}$ kanssa ei tarvita. EPTR-menetelmällä tuotetut aaltomuodot ovat identtisiä DPW:llä ja PTR:llä tuotettujen kanssa, mutta laskutoimituksien määrää voidaan vähentää vielä 30 prosenttia PTR:ään verrattuna. \cite{Bank2013}
+
+\subsection{Ad-hoc-algoritmit}
+
+Ad-hoc (lat. \textit{tätä varten})--algoritmeihin lukeutuu useita erilaisia menetelmiä, joita yhdistää tunnettujen ja usein yksinkertaisten digitaalisen signaalinkäsittelyn menetelmien hyödyntäminen geometrisiä aaltomuotoja muistuttavien signaalien tuottamiseksi. Kategorian menetelmät saattavat laskostua algoritmista riippuen. Useat näistä perustuvat epälineaarisiin menetelmiin, kuten aaltomuotoiluun (\textit{waveshaping}) tai vaihesäröön (\textit{phase distortion}). \cite{Pekonen2014, Kleimola2013, Timoney2009}
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%
+
+\section{Simulointi}
+
+Tässä osiossa tarkastellaan triviaalisesti tuotettuja aaltomuotoja ylinäytteistämällä ja neljännen asteen DPW-algoritmilla saatavia tuloksia. Simulointi toteutettiin MATLAB-ohjelmistolla ja tuotettu ohjelmakoodi löytyy liittestä \ref{sec:matlab}.
+
+\subsection{Ylinäytteistäminen} \label{sec:ylinäytsim}
+
+Tutkitaan triviaalisesti tuotetun kolmio- ja saha-aallon laskostumista eri näytteenottotaajuuksilla. Perustaajuuksina käytetään pianon säveliä C5, C6, C7 ja C8, joita vastaavat perustaajuudet on esitetty taulukossa \ref{kolmiosim}. \\
+\begin{table}[h]
+\centering
+\caption{Perustaajuudet (Hz).}
+\label{kolmiosim}
+{\setlength{\tabcolsep}{4mm}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\ 523 \ & \ 1047 \ & \ 2093 \  & \ 4186 \ \\ \hline
+\end{tabular}} \vspace{3mm}
+\end{table} \\
+Saha-aallon tapauksessa tutkittiin, kuinka moninkertainen ylinäytteistys vaadittaisiin 44,1 kHz perusnäytteenottotaajuudelle, jotta kaikkien laskostuneiden komponenttien taso olisi vähintään 60 dB pienempi verrattuna perustaajuuteen. Kuvassa \ref{fig:sahasimulaatio} esitetään jokaiselle taulukon \ref{kolmiosim} perustaajuudelle tarvittava näytteenottotaajuus, kun näytteenottotaajuus aina kaksinkertaistettiin. Tulokset esitetään taulukossa \ref{sahasimulointi}. Tulokset osoittavat hyvin, miksi saha-aallon ja samalla jyrkkyydellä laskevan suorakaide-aallon tapauksessa triviaalin menetelmän ylinäytteistäminen ei ole vaihtoehto käytännön toteutuksissa tarvittavan näytteenottotaajuuden ollessa useita megahertsejä. \\
+\vspace{2mm}
+\begin{table}[h]
+\begin{center}
+\caption{Vaadittava ylinäytteistys saha-aallolla.}
+\label{sahasimulointi}
+{\setlength{\tabcolsep}{4mm}
+\begin{tabular}{@{}llllll@{}}
+\toprule
+$f_0$ (Hz)  & 523 & 1047 & 2093 & 4186 &  \\  \midrule
+$f_s$ (kHz)  & 705,6 \  & 1 411,2 \ & 2 822,4 \  & 5 644,8 &  \\  \midrule
+Ylinäytteistyskerroin \ \ \ \  & 16 & 32 & 64 & 128 &  \\  \bottomrule
+\end{tabular}}
+\end{center}
+\end{table}
+\begin{figure}[ht] 
+\begin{center}
+\subfigure[$f_0 = $ 523 Hz, $f_s = $ 705,6 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{saha_523hz_fs_3.pdf}}
+\subfigure[$f_0 = $ 1047 Hz, $f_s = $ 1 411,2 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{saha_1047hz_fs_4.pdf}}
+\subfigure[$f_0 = $ 2093 Hz, $f_s = $ 2 822,4 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{saha_2093hz_fs_5.pdf}}
+\subfigure[$f_0 = $ 4186 Hz, $f_s = $ 5 644,8 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{saha_4186hz_fs_6.pdf}}			
+\caption{Saha-aallon ylinäytteistäminen. Puhtaat spektrin komponentit ovat merkitty rasteilla.}
+\label{fig:sahasimulaatio}
+\end{center}
+\end{figure} \\
+Kolmioaallon tapauksessa puolestaan tarkastellaan audiojärjestelmissä yleisintä 44,1 kHz:n näytteenottotaajuutta ja sen kaksinkertaista ylinäytteistettyä tapausta 88,2 kHz. Kiinnostuksen kohteena on kuinka paljon triviaali kolmioaalto laskostuu näillä näytteenottotaajuuksilla, jonka perusteella voidaan arvioida milloin triviaalin menetelmän äänenlaatu riittäisi mahdollisesti musiikkisovelluksiin. Jokaiselle perustaajuudelle laskettiin spektri kummallakin näytteenottotaajuudella. Saadut spektrit esitetään kuvassa \ref{fig:kolmiosimulaatio}. \\\\
+Laskostuneiden komponenttien tason nähdään olevan yli 60 dB perustaajuutta matalampi yhden kilohertsin perustaajuuksille saakka molemmilla näytteenottotaajuuksilla. Ylinäytteistyksen tapauksessa tämä tilanne säilyy aina perustaajuudelle 2093 Hz saakka, ja 4186 Hz:n tapauksessakin vain muutama komponentti rikkoo kyseisen vaimennussuhteen. Tämän perusteella triviaalin kolmioaallon voidaan arvoida tarjoan kohtuullisen hyvän äänenlaadun etenkin pienillä perustaajuuksilla ja kaksinkertaisella ylinäytteistyksellä. 
+\begin{figure}[ht] 
+\begin{center}
+\subfigure[$f_0 = $ 523 Hz, $f_s = $ 44,1 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{kolmio_523hz_fs_44100.pdf}}
+\subfigure[$f_0 = $ 523 Hz, $f_s = $ 88,2 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{kolmio_523hz_fs_88200.pdf}}
+\subfigure[$f_0 = $ 1047 Hz, $f_s = $ 44,1 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{kolmio_1047hz_fs_44100.pdf}}
+\subfigure[$f_0 = $ 1047 Hz, $f_s = $ 88,2 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{kolmio_1047hz_fs_88200.pdf}}
+\subfigure[$f_0 = $ 2093 Hz, $f_s = $ 44,1 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{kolmio_2093hz_fs_44100.pdf}}
+\subfigure[$f_0 = $ 2093 Hz, $f_s = $ 88,2 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{kolmio_2093hz_fs_88200.pdf}}
+\subfigure[$f_0 = $ 4186 Hz, $f_s = $ 44,1 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{kolmio_4186hz_fs_44100.pdf}}
+\subfigure[$f_0 = $ 4186 Hz, $f_s = $ 88,2 kHz]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{kolmio_4186hz_fs_88200.pdf}}				
+\caption{Triviaalin kolmioaallon spektrit lineaarisella taajuusasteikolla.}
+\label{fig:kolmiosimulaatio}
+\end{center}
+\end{figure} 
+
+\subsection{DPW} \label{sec:dpw}
+
+Osiossa tarkastellaan neljännen asteen DPW-algoritmilla saatavia tuloksia saha-aallolle taulukon \ref{kolmiosim} perustaajuuksilla. DPW4-algoritmin simulointi toteutettiin MATLAB-ohjelmistolla algoritmin kehittäjien jakaman Python-ohjelmointikielisen lähdekoodin pohjalta \cite{Koodi}. Kuvassa \ref{fig:dpwsim} nähdään jokaiselle tarkasteltavalle perustaajudelle oskillaattorialgoritmilla saatu aaltomuoto näytteinä sekä näitä vastaavat taajuusvasteet. Spektreissä rastit kuvaavat ideaalisen aaltomuodon taajuuskomponentteja. Kuvan perusteella voidaan todeta neljännen asteen DPW-algoritmin vaimentavan laskostumista tehokkaasti etenkin keski- ja alataajuuksilla. Lopputuloksena saatavan spektrin muoto ei aivan täysin vastaa ideaalista aaltomuotoa, mutta kuulokokemuksen kannalta ero on lähes mitätön.
+\begin{figure}[h] 
+\begin{center}
+\subfigure[$f_0 = $  523 Hz, näytteet.]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{dpw_523Hz_stem.pdf}}
+\subfigure[$f_0 = $  523 Hz, spektri.]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{dpw_523Hz.pdf}}
+\subfigure[$f_0 = $ 1047 Hz, näytteet.]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{dpw_1047Hz_stem.pdf}}
+\subfigure[$f_0 = $ 1047 Hz, spektri.]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{dpw_1047Hz.pdf}}
+\subfigure[$f_0 = $ 2093 Hz, näytteet.]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{dpw_2093Hz_stem.pdf}}
+\subfigure[$f_0 = $ 2093 Hz, spektri.]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{dpw_2093Hz.pdf}}
+\subfigure[$f_0 = $ 4186 Hz, näytteet.]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{dpw_4186Hz_stem.pdf}}
+\subfigure[$f_0 = $ 4186 Hz, spektri.]{\includegraphics[trim={0.5cm 0cm 0.5cm 0cm}, clip, width=71mm]{dpw_4186Hz.pdf}}				
+\caption{DPW-algoritmin simulaatio. Vasemmalla puolella kahden jakson verran näytteitä ja oikealla vastaava spektri.}
+\label{fig:dpwsim}
+\end{center}
+\end{figure}
+
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%
+
+\section{Yhteenveto}
+
+Tässä työssä esiteltiin useita erilaisia menetelmiä vähentävässä synteesissä tarvittavien lähdesignaalien digitaaliseen tuottamiseen. Optimaalisen oskillaattorialgoritmin ominaisuudet ovat:
+\begin{enumerate}
+  \item algoritmin tuottamassa äänessä ei kuulla laskostumista musiikissa käytetyillä perustaajuuksilla (20--8000 Hz),
+  \item menetelmä on laskennallisesti tehokas ja vaatii vähän muistia, sekä
+  \item algoritmissa ei tarvita jakolaskua aikamuuttuvalla parametrilla. \vspace{1mm}
+\end{enumerate} 
+Yksikään tässä työssä esitellyistä menetelmistä ei täytä kaikkia kolmea vaatimusta. Yhtä täydellistä oskillaattorialgoritmia ei siis ole ainakaan vielä olemassa, vaan käytettävä menetelmä joudutaan valitsemaan käyttötarkoituksen ja haluttujen ominaisuuksien perusteella. Esitellyt menetelmät on koottu taulukkoon \ref{vertailu} käsittelyjärjestyksessä. Käytännön tilanteissa kuitenkin monien menetelmien vaatimukset ja äänenlaatu riippuvat voimakkaasti toteutustavasta sekä esimerkiksi käytettävästä asteluvusta, joten taulukossa esitetyt arvot ovat suuntaa antavia. \cite{Valimaki2007, Pekonen2014, Historia, Pekonen2011} \\
+\begin{table}[h]
+\caption{Oskillaattorialgoritmien ominaisuuksien vertailu.}
+\label{vertailu}
+\centering
+{\setlength{\tabcolsep}{2.5mm}
+{\renewcommand{\arraystretch}{1.05}
+\begin{tabular}{@{}lllll@{}}
+	\toprule
+	Algoritmi     & Laskennallinen kuorma & Muistivaatimukset & Äänenlaatu    &  \\ \midrule
+	Triviaali     & erittäin pieni        & -                 & heikko        &  \\
+	Additiivinen  & erittäin suuri        & erittäin pieni    & erinomainen   &  \\
+	Aaltotaulukko & keskiverto - suuri    & suuri             & erittäin hyvä &  \\
+	BLIT-SWS      & keskiverto - suuri    & pieni             & hyvä          &  \\
+	BLIT-FDF      & pieni                 & erittäin pieni    & erittäin hyvä &  \\
+	BLEP          & keskiverto            & pieni             & hyvä          &  \\
+	PolyBLEP      & pieni                 & erittäin pieni    & erittäin hyvä &  \\
+	Lane          & keskiverto            & erittäin pieni    & keskiverto    &  \\
+	DPW           & pieni                 & erittäin pieni    & erittäin hyvä &  \\
+	PTR           & pieni                 & erittäin pieni    & erittäin hyvä &  \\
+	EPTR          & erittäin pieni        & erittäin pieni    & erittäin hyvä &  \\ \bottomrule
+\end{tabular}}}
+\end{table} \\\\
+Varsinaisen digitaalisen vähentävän synteesin toteuttaminen vaatii tässä työssä käsitellyn lähdesignaalien tuottamisen lisäksi analogisten syntetisaattoreiden suodattimien mallintamisen. Työssä esitellyissä lähdesignaalien generointimenetelmissä on keskitytty tuottamaan mahdollisimman lähelle ideaalista tapausta vastaavia geometrisiä aaltomuotoja. Kuitenkin todellisuudessa monien analogisyntetisaattorien tuottamat aaltomuodot poikkeavat ideaalisista tapauksista, jolloin realistiseen lopputulokseen vaaditaan näiden poikkeamien mallintamista \cite{Pekonen2011}. Tähän voidaan soveltaa suodatinmallinnuksessa käytettyjä signaali- ja piirimallinnusmenetelmiä, jolloin lähimmäs todellisuutta päästään mallintamalla yksittäisen analogisyntetisaattorin sähköinen toiminta myös lähdesignaalien osalta. \cite{Historia}
+
+\clearpage
+
+% VIITTEET
+
+\phantomsection
+\addcontentsline{toc}{section}{Viitteet}
+
+\bibliographystyle{babunsrt-lf} % suomenkieliset viitteet, -lf = lastname forename
+
+\bibliography{referenssit}
+
+\nocite{Sanasto}
+
+% LIITTEET
+
+\clearpage
+\appendix
+\addcontentsline{toc}{section}{Liitteet}
+
+\section{MATLAB ohjelmakoodi} \label{sec:matlab}
+
+Liitteenä MATLAB -ohjelmistolle kirjoitetut komentosarjat, joilla tuotettiin kaikki työn kuvaajat paitsi \ref{fig:lehtonen}.
+
+\lstset{basicstyle=\tiny} % scriptsize
+
+\subsection*{aaltomuodot.m}
+\vspace{-5mm}
+\lstinputlisting{aaltomuodot.m}
+\vspace{6mm}
+\subsection*{moogalipaasto.m}
+\vspace{-5mm}
+\lstinputlisting{moogalipaasto.m}
+\vspace{6mm}
+\subsection*{fouriersarjat.m}
+\vspace{-5mm}
+\lstinputlisting{fouriersarjat.m}
+\vspace{6mm}
+\subsection*{laskostuminen.m}
+\vspace{-5mm}
+\lstinputlisting{laskostuminen.m}
+\vspace{6mm}
+\subsection*{sincfunktio.m}
+\vspace{-5mm}
+\lstinputlisting{sincfunktio.m}
+\vspace{6mm}
+\subsection*{askelfunktio.m}
+\vspace{-5mm}
+\lstinputlisting{askelfunktio.m}
+\vspace{6mm}
+\subsection*{vaimeneminen.m}
+\vspace{-5mm}
+\lstinputlisting{vaimeneminen.m}
+\vspace{6mm}
+\subsection*{phi.m}
+\vspace{-5mm}
+\lstinputlisting{phi.m}
+\vspace{6mm}
+\subsection*{dpw.m}
+\vspace{-5mm}
+\lstinputlisting{dpw.m}
+\vspace{6mm}
+\subsection*{ptr.m}
+\vspace{-5mm}
+\lstinputlisting{ptr.m}
+\vspace{6mm}
+\subsection*{ylinaytteistaminen.m}
+\vspace{-5mm}
+\lstinputlisting{ylinaytteistaminen.m}
+\vspace{6mm}
+\subsection*{DPW4.m}
+\vspace{-5mm}
+\lstinputlisting{DPW4.m}
+\vspace{6mm}
+\subsection*{simulointi.m}
+\vspace{-5mm}
+\lstinputlisting{simulointi.m}
+
+\end{document}
