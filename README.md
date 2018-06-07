@@ -1,6 +1,6 @@
 # Bachelor's Thesis (in Finnish)
 
-### Analogisen äänisynteesin digitaalinen mallinnus (*Digital Modeling of Analog Sound Synthesis*)   
+#### Analogisen äänisynteesin digitaalinen mallinnus (*Digital Modeling of Analog Sound Synthesis*)   
 Aalto University School of Electrical Engineering,      
 Department of Signal Processing and Acoustics,   
 2014   
@@ -11,7 +11,7 @@ Thesis Advisor: [Prof. Vesa Välimäki](https://people.aalto.fi/new/vesa.valimak
 
 Note: Updated figures from eps to pdf and slight visual tweaking (now using the "microtype" latex package etc) from the original 2014 version (contents and text are unchanged). 
    
-### Abstract:    
+#### Abstract:    
 
 Tämä kandidaatintyö esittelee menetelmiä analogisen äänisynteesin digitaaliseen
 mallintamiseen ja toteuttamiseen reaaliajassa. Useimmat analogiset syntetisaattorit käyttävät äänentuottomenetelmänään vähentävää synteesiä, missä spektriltään rikasta lähdesignaalia suodatetaan halutun äänen aikaansaamiseksi. Vähentävän synteesin digitaalinen toteuttaminen sisältää monia haasteita, ja aihepiiri on ollut akateemisen tutkimuksen kohteena etenkin viimeisen kymmenen vuoden ajan.
